@@ -7,12 +7,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.toolbar.*
 
-
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : AppCompatActivity(R.layout.activity_detail) {
     private lateinit var aFileIV: ImageView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail)
 
         btn_arrow_back.setOnClickListener {
             onBackPressed()
@@ -30,7 +28,7 @@ class DetailActivity : AppCompatActivity() {
 //        }
 
         aBundle?.let {
-            val aBitmap = BitmapFactory.decodeFile(aBundle.getString("File"))
+            val aBitmap = BitmapFactory.decodeFile(it.getString("File"))
             aFileIV.setImageBitmap(aBitmap)
         }
 

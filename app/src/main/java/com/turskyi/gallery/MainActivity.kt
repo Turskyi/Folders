@@ -23,14 +23,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.*
 import java.io.File
 
+/** Showing folders with preview of pictures and pictures in them */
 class MainActivity : AppCompatActivity() {
 
     private var path = "/storage/"
 
     // My File list
     private var aFileList = ArrayList<MyFile?>()
-
-    private var checkedList = ArrayList<MyFile?>()
 
     private var isGridEnum: ViewTypes = LINEAR
 
@@ -82,12 +81,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-         viewAdapter.getAllChecked(checkedList)
-
-        //doesn't work
-//        if (checkedList.isNotEmpty()){
-//            btn_view_changer.setImageResource(R.drawable.ic_remove32)
-//        }
+         viewAdapter.getAllChecked()
     }
 
     private fun loadMore() {
@@ -108,19 +102,21 @@ class MainActivity : AppCompatActivity() {
             val myList = ArrayList<MyFile?>()
 
             val f = File(path)
-            val files = f.listFiles()
+            val files: Array<File>? = f.listFiles()
 
-            for (inFile in files) {
-                if (inFile.path == "/storage/self") continue
-                else if (inFile.path == "/storage/emulated") {
-                    if (inFile.isDirectory) {
-                        aFileList.add(MyFile(
-                            "/storage/emulated/0/", inFile.name, null, null, false))
+            if (files != null) {
+                for (inFile in files) {
+                    if (inFile.path == "/storage/self") continue
+                    else if (inFile.path == "/storage/emulated") {
+                        if (inFile.isDirectory) {
+                            aFileList.add(MyFile(
+                                "/storage/emulated/0/", inFile.name, null, null, false))
+                        }
                     }
                 }
             }
 
-            for (index in files.indices) {
+            for (index in files?.indices!!) {
                 // Skip old files
                 if (index < scrollPosition) continue
 
@@ -215,7 +211,7 @@ class MainActivity : AppCompatActivity() {
         aFileList = ArrayList()
 
         //the title of toolbar is the path
-//        toolbar_title.text = path
+//        toolbarTitle.text = path
 
         btn_arrow_back.visibility = VISIBLE
         if (path == "/storage/") {
@@ -228,27 +224,29 @@ class MainActivity : AppCompatActivity() {
         if (path == "/storage/")
 
         //without this line onBackPress not going to work from the main screen
-            toolbar_title.text = title
+            toolbarTitle.text = this.title
         else
-            toolbar_title.text = f.name
+            toolbarTitle.text = f.name
 
-        val files = f.listFiles()
+        val files: Array<File>? = f.listFiles()
 
-        for (inFile in files) {
-            if (inFile.path == "/storage/self") continue
-            else if (inFile.path == "/storage/emulated") {
-                if (inFile.isDirectory) {
-                    aFileList.add(MyFile("/storage/emulated/0/", inFile.name, null, null, false))
+        if (files != null) {
+            for (inFile in files) {
+                if (inFile.path == "/storage/self") continue
+                else if (inFile.path == "/storage/emulated") {
+                    if (inFile.isDirectory) {
+                        aFileList.add(MyFile("/storage/emulated/0/", inFile.name, null, null, false))
+                    }
                 }
             }
         }
 
-        for (index in files.indices) {
+        for (index in files?.indices!!) {
             if (maxRow == index) break
 
             // This variable for image
             var imageFile: MyFile? = null
-            if (files[index].isDirectory) {
+            if (files.get(index).isDirectory) {
                 /// Get List of files in folder
                 val filesInDirectory = files[index].listFiles()
 
@@ -301,7 +299,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         btn_arrow_back.visibility = VISIBLE
-        if (toolbar_title.text == title) {
+        if (toolbarTitle.text == title) {
             btn_arrow_back.visibility = INVISIBLE
             AlertDialog.Builder(this)
                 .setTitle("Really Exit?")

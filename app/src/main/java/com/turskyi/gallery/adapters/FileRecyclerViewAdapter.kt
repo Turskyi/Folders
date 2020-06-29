@@ -7,10 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
 import com.turskyi.gallery.DetailActivity
 import com.turskyi.gallery.FileLiveSingleton
@@ -18,7 +16,6 @@ import com.turskyi.gallery.R
 import com.turskyi.gallery.models.MyFile
 import com.turskyi.gallery.models.ViewTypes
 import com.turskyi.gallery.models.ViewTypes.*
-import kotlinx.android.synthetic.main.toolbar.*
 
 class FileRecyclerViewAdapter(
     private val aContext: Context,
@@ -40,15 +37,18 @@ class FileRecyclerViewAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             LINEAR.id -> {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.list_item, parent, false)
                 ListViewHolder(view)
             }
-            ViewTypes.LOADING.id -> {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_loading, parent, false)
+            LOADING.id -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_loading, parent, false)
                 MyLoadingHolder(view)
             }
             else -> {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.picture_item, parent, false)
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.picture_item, parent, false)
                 ListViewHolder(view)
             }
         }
@@ -77,7 +77,7 @@ class FileRecyclerViewAdapter(
     }
 
     fun changeViewType() {
-        isGridEnum = if (isGridEnum.id == ViewTypes.LINEAR.id) {
+        isGridEnum = if (isGridEnum.id == LINEAR.id) {
             GRID
         } else {
             LINEAR
@@ -85,14 +85,14 @@ class FileRecyclerViewAdapter(
         notifyDataSetChanged()
     }
 
-    fun getAllChecked(checkedFiles: ArrayList<MyFile?> ): ArrayList<MyFile?> {
-//         TODO return variable
-//         TODO for with filter
-//         TODO return variable
+    //    fun getAllChecked(checkedFiles: ArrayList<MyFile?> ): ArrayList<MyFile?> {
+    fun getAllChecked(): ArrayList<MyFile?> {
+        val checkedFiles: ArrayList<MyFile?> = ArrayList()
             for (aFile in listFile) {
                 if (aFile?.isChecked!!) {
                     numberOfChecked++
                    checkedFiles.add(aFile)
+                    notifyDataSetChanged()
                 }
             }
         notifyDataSetChanged()
@@ -143,7 +143,7 @@ class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 //                }
 
             aFile.imageFile?.let {
-                val path: String = aFile.imageFile.path
+                val path: String = it.path
                 val myBitmap = BitmapFactory.decodeFile(path)
                 previewIV.scaleType = ImageView.ScaleType.CENTER_CROP
                 previewIV.setImageBitmap(myBitmap)
